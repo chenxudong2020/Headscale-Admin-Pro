@@ -8,7 +8,5 @@ services:
     volumes:  
       - ./config:/etc/headscale
       - ./data:/var/lib/headscale
-      - ./caddy:/etc/caddy
-      - ./caddy_data:/root/.local/share/caddy
     environment:
       - SERVER_NET="eth0"
