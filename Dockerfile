@@ -17,7 +17,7 @@ COPY --chmod=755 ./rootfs /
 COPY --from=builder /usr/lib/python3.12/site-packages /usr/lib/python3.12/site-packages
 ARG ARCH="amd64"
 
-RUN apk add --no-cache tzdata net-tools iputils python3 iproute2 && \
+RUN apk add --no-cache tzdata net-tools iputils python3 iproute2 bash && \
     ln -fs /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
     rm -rf /var/cache/apk/*
 
