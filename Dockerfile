@@ -14,7 +14,7 @@ ENV BASE_PATH="/etc/s6-overlay/s6-rc.d" \
     FLASK_APP=/app/app.py 
 
 COPY --chmod=755 ./rootfs /
-COPY --from=builder /usr/local/lib/python3.10/site-packages /usr/lib/python3.10/site-packages
+COPY --from=builder /usr/lib/python3.12/site-packages /usr/lib/python3.12/site-packages
 ARG ARCH="amd64"
 
 RUN apk add --no-cache tzdata net-tools iputils python3 iproute2 && \
