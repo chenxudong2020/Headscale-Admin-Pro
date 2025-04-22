@@ -4,6 +4,7 @@ RUN  apk update && apk add --no-cache tzdata net-tools iputils gcc python3-dev m
     pip3 install --no-cache-dir --break-system-packages pyyaml psutil flask sqlalchemy flask_sqlalchemy wtforms captcha flask_migrate psutil flask_login requests apscheduler
 
 
+RUN find / -name "site-packages" 2>/dev/null || echo "No site-packages found"
 
 FROM alpine:latest
 
