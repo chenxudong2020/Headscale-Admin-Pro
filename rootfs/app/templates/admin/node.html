@@ -63,7 +63,7 @@
   <script>
   layui.config({
     base: '/static/' // 静态资源所在路径
-  }).use(['index', 'table', 'dropdown'], function(){
+  }).use(['layer','index', 'table', 'dropdown'], function(){
     var table = layui.table;
     var form = layui.form;
     var dropdown = layui.dropdown;
@@ -71,6 +71,10 @@
     var util = layui.util;
     var $ = layui.$;
     var device = layui.device();
+    var layer = layui.layer;
+    var index = layer.load(1, {
+        shade: [0.1,'#fff']
+      });
     
     $(document).ready(function() {
         var message = $('input[name="message"]').val();
@@ -119,6 +123,7 @@
         
       },
       done: function(res, curr, count) {
+        layer.close(index);
       }
     });
 
