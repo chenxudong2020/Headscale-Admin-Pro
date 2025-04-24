@@ -203,6 +203,8 @@ class DatabaseManager:
                 'ip': node.ip,
                 'lastTime': node.lastTime,
                 'createTime':node.createTime,
+                'updatedAt':node.updated_at,
+                'deletedAt':node.deleted_at,
                 'OS': json.loads(node.host_info).get("OS")+json.loads(node.host_info).get("OSVersion"),
                 'Client':json.loads(node.host_info).get("IPNVersion")
 
