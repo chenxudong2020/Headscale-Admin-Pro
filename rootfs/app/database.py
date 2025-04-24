@@ -201,7 +201,7 @@ class DatabaseManager:
                 'userName': node.userName,
                 'name': node.name,
                 'ip': node.ip,
-                'lastTime': node.lastTime,
+                'lastTime': node.updated_at,
                 'createTime':node.createTime,
                 'updatedAt':node.updated_at,
                 'deletedAt':node.deleted_at,
