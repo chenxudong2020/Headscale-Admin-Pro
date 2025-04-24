@@ -1,7 +1,7 @@
 import json
 from dataclasses import dataclass, asdict
 from exts import db
-from models import UserModel, ACLModel,ConfigModel,LogModel,PreAuthKeysModel,NodeModel,RouteModel,LogModel
+from models import UserModel, ACLModel,ConfigModel,LogModel,PreAuthKeysModel,NodeModel,RouteModel
 from typing import Any, List, Dict,Union
 from werkzeug.security import generate_password_hash
 from sqlalchemy import func
