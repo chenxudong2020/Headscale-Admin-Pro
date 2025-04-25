@@ -151,4 +151,16 @@ def rate_limit(limit: int = 5, window: int = 60):
             request_timestamps[user_ip].append(now)
             return func(*args, **kwargs)
         return wrapper
-    return decorator                  
+    return decorator 
+
+
+
+
+def refresh_apikey():
+    try:
+        headscale_command = "headscale apikeys create"
+        result = subprocess.run(headscale_command, shell=True, capture_output=True, text=True, check=True)
+        apikey = result.stdout.strip()
+        current_app.config['BEARER_TOKEN'] = apikey
+    except subprocess.CalledProcessError as e:
+        print(f"Error exec to_refresh_apikey: {e.stderr}")

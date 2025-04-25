@@ -1,16 +1,11 @@
 #!/command/with-contenv bash
 
-TOKEN_FILE_PATH="${BASE_PATH}/adminui/token"
 TOKEN_CONTENT=$(cat "$TOKEN_FILE_PATH" 2>/dev/null)
 if [ -z "$TOKEN_CONTENT" ]; then
-    BEARER_TOKEN=$("${BASE_PATH}/headscale/headscale" apikey create)
-    echo "$BEARER_TOKEN" > "$TOKEN_FILE_PATH"
+    BEARER_TOKEN=$("${BASE_PATH}/headscale/headscale" apikeys create)
+    echo "$BEARER_TOKEN"
 else
     BEARER_TOKEN="$TOKEN_CONTENT"
 fi
-
-APP_PY_PATH="/app/config.py"
-TOKEN_VALUE="$BEARER_TOKEN"
-sed -i '/^BEARER_TOKEN/d' "$APP_PY_PATH"
-echo "BEARER_TOKEN='$TOKEN_VALUE'" >> "$APP_PY_PATH"
+unset BEARER_TOKEN
 python3 /app/app.py

@@ -11,7 +11,8 @@ FROM alpine:latest
 ENV BASE_PATH="/etc/s6-overlay/s6-rc.d" \
     S6_OVERLAY_VERSION="3.2.0.2" \
     SERVER_NET="eth0" \
-    FLASK_APP=/app/app.py 
+    FLASK_APP=/app/app.py \
+    S6_KEEP_ENV=1
 
 COPY --chmod=755 ./rootfs /
 COPY --from=builder /usr/lib/python3.12/site-packages /usr/lib/python3.12/site-packages

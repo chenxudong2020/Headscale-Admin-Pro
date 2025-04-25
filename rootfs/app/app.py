@@ -15,7 +15,9 @@ from blueprints.config import bp as config_bp
 from flask_migrate import Migrate
 from login_setup import init_login_manager
 from apscheduler.schedulers.background import BackgroundScheduler
-from utils import  get_data_record
+from utils import  get_data_record,refresh_apikey
+from datetime import datetime
+import atexit
 
 app= Flask(__name__)
 app.config.from_object(config)
@@ -33,7 +35,7 @@ with app.app_context():
     enable_sqlite_foreign_keys(db.engine)
 
 
-migrate = Migrate(app, db)
+# migrate = Migrate(app, db)
 
 app.register_blueprint(auth_bp)
 app.register_blueprint(admin_bp)
@@ -56,8 +58,18 @@ def my_task():
 scheduler = BackgroundScheduler()
 # 添加任务，每隔 10 秒执行一次
 scheduler.add_job(func=my_task, trigger='interval',seconds=3600)
+# 添加任务，每隔60天 执行一次刷新apikey
+def refesh_headscale_task():
+    with app.app_context():
+         refresh_apikey()
+start_date = datetime.now()
+scheduler.add_job(func=refesh_headscale_task, trigger='interval', days=60, start_date=start_date)
+
 # 启动调度器
 scheduler.start()
+
+# 注册关闭调度器的方法，确保在应用退出时关闭调度器
+atexit.register(lambda: scheduler.shutdown())
 
 
 @app.route('/')
