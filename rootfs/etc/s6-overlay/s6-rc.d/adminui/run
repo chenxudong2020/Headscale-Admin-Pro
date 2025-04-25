@@ -7,5 +7,5 @@ if [ -z "$TOKEN_CONTENT" ]; then
 else
     BEARER_TOKEN="$TOKEN_CONTENT"
 fi
-unset BEARER_TOKEN
+export BEARER_TOKEN
 python3 /app/app.py
