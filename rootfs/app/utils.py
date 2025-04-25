@@ -161,6 +161,11 @@ def refresh_apikey():
         headscale_command = "headscale apikeys create"
         result = subprocess.run(headscale_command, shell=True, capture_output=True, text=True, check=True)
         apikey = result.stdout.strip()
+        # 先设置变量然后写入token文件
         current_app.config['BEARER_TOKEN'] = apikey
+        BASE_PATH = os.getenv('BASE_PATH', '/etc/s6-overlay/s6-rc.d')
+        tokenPath='{}{}'.format(BASE_PATH,'/adminui/token')
+        with open(tokenPath, 'w') as file:
+            file.write(apikey)
     except subprocess.CalledProcessError as e:
         print(f"Error exec to_refresh_apikey: {e.stderr}")
