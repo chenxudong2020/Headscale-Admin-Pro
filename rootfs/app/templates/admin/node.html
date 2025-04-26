@@ -205,6 +205,7 @@
       switch(obj.event){
         case 'goHome':
           window.location.href = '/admin';
+          break;
         case 'addNode':
           layer.prompt({title: '请输入节点id'}, function(value, index, elem){
             if(value === '') return elem.focus();
