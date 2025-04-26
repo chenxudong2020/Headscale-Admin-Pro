@@ -1,13 +1,13 @@
 import json
 import math
 import os
-from flask import current_app
-import psutil
+from flask import current_app # type: ignore
+import psutil # type: ignore
 from exts import db
 from datetime import datetime
 import subprocess
-from flask import current_app,request, jsonify
-import requests 
+from flask import current_app,request, jsonify # type: ignore
+import requests  # type: ignore
 from database import DatabaseManager
 from time import time
 

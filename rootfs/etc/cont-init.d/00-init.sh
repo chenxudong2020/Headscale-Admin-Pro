@@ -11,9 +11,14 @@ else
 fi
 
 CONTAINER_DB_DIR="/var/lib/headscale"
-if [ -z "$(ls -A $CONTAINER_DB_DIR 2>/dev/null)" ]; then
-	echo "将自动复制数据库文件"
-	cp -r $INIT_DATA_APP_CONFIG/var /
+DB_FILE="$CONTAINER_DB_DIR/db.sqlite"
+if [ ! -f "$DB_FILE" ]; then
+	echo "将自动生成数据库文件"
+	# 初始化数据库
+    cd /app
+	python3 -m flask db init
+	python3 -m flask db migrate
+	python3 -m flask db upgrade
 else
     echo "检测到SQLITE已有数据"
 fi

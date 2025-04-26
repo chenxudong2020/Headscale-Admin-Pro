@@ -1,10 +1,10 @@
-import wtforms
-from flask import session
-from flask_login import current_user
-from sqlalchemy import func
-from werkzeug.security import check_password_hash, generate_password_hash
-from wtforms.validators import  length, DataRequired, Regexp, Length, EqualTo
-from sqlalchemy import  text
+import wtforms # type: ignore
+from flask import session # type: ignore
+from flask_login import current_user # type: ignore
+from sqlalchemy import func # type: ignore
+from werkzeug.security import check_password_hash, generate_password_hash # type: ignore
+from wtforms.validators import  length, DataRequired, Regexp, Length, EqualTo # type: ignore
+from sqlalchemy import  text # type: ignore
 from exts import db
 from database import DatabaseManager
 

@@ -1,10 +1,10 @@
 import json
 from dataclasses import dataclass, asdict
 from exts import db
-from models import UserModel, ACLModel,ConfigModel,LogModel,PreAuthKeysModel,NodeModel,RouteModel
+from extmodels import Users,Policies,Configs,Logs,Nodes,PreAuthKeys
 from typing import Any, List, Dict,Union
-from werkzeug.security import generate_password_hash
-from sqlalchemy import func
+from werkzeug.security import generate_password_hash # type: ignore
+from sqlalchemy import func # type: ignore
 from types import SimpleNamespace
 from datetime import datetime
 
@@ -30,11 +30,11 @@ class DatabaseManager:
     # acl分页查询
     def get_acl(self, page=1, per_page=10):
       # 使用分页查询并直接返回字典格式
-      pagination = ACLModel.query.with_entities(
-        ACLModel.id.label('id'),
-        ACLModel.acl.label('acl'),
-        UserModel.name.label('userName')
-      ).join(UserModel, ACLModel.user_id == UserModel.id).paginate(
+      pagination = Policies.query.with_entities(
+        Policies.id.label('id'),
+        Policies.data.label('acl'),
+        Users.name.label('userName')
+      ).join(Users, Policies.user_id == Users.id).paginate(
         page=page, per_page=per_page, error_out=False
      )
       data = [row._asdict() for row in pagination.items]
@@ -46,19 +46,24 @@ class DatabaseManager:
             totalRow={"count": len(data)}  # 当前页的记录数
         )
     
-    def re_acl(self,acl_id,new_acl):
-        acl = ACLModel.query.filter_by(id=acl_id).first()
-        acl.acl = new_acl
+    def re_acl(self,acl_id,new_acl,user_id):
+        acl = Policies.query.filter_by(id=acl_id).first()
+        acl.data = new_acl
+        acl.user_id = user_id
         db.session.commit()
 
 
     def getConfig(self):
-        config = ConfigModel.query.first()
+        config = Configs.query.first()
         if not config:
-            return SimpleNamespace(**{key: "0" for key in ConfigModel.__table__.columns.keys()})
+            # 查询不到赋值默认值
+            config =  Configs(acceptreg='1',acceptlogin='1',acceptnewlogin='1')
+            self.db.session.add(config)
+            self.db.session.commit()
+            return SimpleNamespace(**{key: "1" for key in Configs.__table__.columns.keys()})
         return SimpleNamespace(**{
             key: (getattr(config, key) or "0")
-            for key in ConfigModel.__table__.columns.keys()
+            for key in Configs.__table__.columns.keys()
         })
     
     def addModel(self,model):
@@ -85,7 +90,7 @@ class DatabaseManager:
     
     #修改密码
     def password(self,new_password,current_user):
-        user = UserModel.query.filter_by(id=current_user.id).first()
+        user = Users.query.filter_by(id=current_user.id).first()
         user.password = generate_password_hash(new_password)
         db.session.commit()
 
@@ -93,11 +98,11 @@ class DatabaseManager:
        # 获取系统配置
     def getSysConfig(self):
       # 使用分页查询并直接返回字典格式
-      config = ConfigModel.query.with_entities(
-           ConfigModel.id,
-           ConfigModel.acceptlogin,
-           ConfigModel.acceptreg,
-           ConfigModel.acceptnewlogin
+      config = Configs.query.with_entities(
+           Configs.id,
+           Configs.acceptlogin,
+           Configs.acceptreg,
+           Configs.acceptnewlogin
       ).first()
       if config:
         return ResponseResult(
@@ -117,13 +122,13 @@ class DatabaseManager:
           ) 
 
     def updateConfig(self,acceptlogin,acceptreg,acceptnewlogin):
-        config = ConfigModel.query.first()         
+        config = Configs.query.first()         
         if config:
             if acceptlogin:
               config.acceptlogin = acceptlogin
               if acceptlogin == '1':
                     # 禁用登录则更新全部user表的数据
-                    users = UserModel.query.filter(UserModel.role != 'manager').all()
+                    users = Users.query.filter(Users.role != 'manager').all()
                     for user in users:
                         user.enable = '0'
             if acceptreg:   
@@ -148,21 +153,21 @@ class DatabaseManager:
             )
 
     def getUserByName(self,name):
-        return UserModel.query.filter_by(name=name).first()
+        return Users.query.filter_by(name=name).first()
         
     # 分页获取日志列表
     def getLogPagination(self,current_user,page=1,per_page=10):
-        query = LogModel.query.with_entities(
-        LogModel.id,
-        LogModel.content,
-        UserModel.name,
-        func.strftime('%Y-%m-%d %H:%M:%S', LogModel.created_at,'localtime').label('create_time')
+        query = Logs.query.with_entities(
+        Logs.id,
+        Logs.content,
+        Users.name,
+        func.strftime('%Y-%m-%d %H:%M:%S', Logs.created_at,'localtime').label('create_time')
         # 可以添加其他需要的字段
-    ) .join(UserModel, LogModel.user_id == UserModel.id) 
+    ) .join(Users, Logs.user_id == Users.id) 
         # 判断用户角色
         if current_user.role != 'manager':
             # 如果不是 manager，只查询当前用户的节点信息
-            query = query.filter(LogModel.user_id == current_user.id)
+            query = query.filter(Logs.user_id == current_user.id)
 
         pagination = query.paginate(page=page, per_page=per_page, error_out=False)
         log_list = [row._asdict() for row in pagination.items]
@@ -175,24 +180,25 @@ class DatabaseManager:
         )
     
     def getNodePagination(self,current_user,page=1,per_page=10):
-        query = NodeModel.query.with_entities(
-            NodeModel.id.label('id'),
-            UserModel.name.label('userName'),
-            NodeModel.given_name.label('name'),
-            NodeModel.user_id,
-            NodeModel.ipv4.label('ip'),
-            NodeModel.host_info,
-            func.strftime('%Y-%m-%d %H:%M:%S', NodeModel.last_seen,'localtime').label('lastTime'),
-            func.strftime('%Y-%m-%d %H:%M:%S', NodeModel.expiry,'localtime').label('expiry'),
-            func.strftime('%Y-%m-%d %H:%M:%S', NodeModel.created_at,'localtime').label('createTime'),
-            func.strftime('%Y-%m-%d %H:%M:%S', NodeModel.updated_at,'localtime').label('updated_at'),
-            func.strftime('%Y-%m-%d %H:%M:%S', NodeModel.deleted_at,'localtime').label('deleted_at')
+        query = Nodes.query.with_entities(
+            Nodes.id.label('id'),
+            Users.name.label('userName'),
+            Nodes.given_name.label('name'),
+            Nodes.user_id,
+            Nodes.ipv4.label('ip'),
+            Nodes.host_info,
+            Nodes.approved_routes.label('approvedRoutes'),
+            func.strftime('%Y-%m-%d %H:%M:%S', Nodes.updated_at,'localtime').label('lastTime'),
+            func.strftime('%Y-%m-%d %H:%M:%S', Nodes.expiry,'localtime').label('expiry'),
+            func.strftime('%Y-%m-%d %H:%M:%S', Nodes.created_at,'localtime').label('createTime'),
+            func.strftime('%Y-%m-%d %H:%M:%S', Nodes.updated_at,'localtime').label('updated_at'),
+            func.strftime('%Y-%m-%d %H:%M:%S', Nodes.deleted_at,'localtime').label('deleted_at')
             # 可以添加其他需要的字段
-        ).join(UserModel, NodeModel.user_id == UserModel.id)
+        ).join(Users, Nodes.user_id == Users.id)
             # 判断用户角色
         if current_user.role != 'manager':
             # 如果不是 manager，只查询当前用户的节点信息
-            query = query.filter(NodeModel.user_id == current_user.id)
+            query = query.filter(Nodes.user_id == current_user.id)
         pagination = query.paginate(page=page, per_page=per_page, error_out=False)
         nodes = pagination.items
           # 数据格式化
@@ -201,7 +207,8 @@ class DatabaseManager:
                 'userName': node.userName,
                 'name': node.name,
                 'ip': node.ip,
-                'lastTime': node.updated_at,
+                'approvedRoutes': node.approvedRoutes,
+                'lastTime': node.lastTime,
                 'createTime':node.createTime,
                 'updatedAt':node.updated_at,
                 'deletedAt':node.deleted_at,
@@ -219,23 +226,23 @@ class DatabaseManager:
         )
     
     def getNodeById(self,machine_id):
-        return NodeModel.query.filter_by(id=machine_id).first()
+        return Nodes.query.filter_by(id=machine_id).first()
     
 
 
     def getPreAuthKeyPagination(self,current_user,page=1,per_page=10):
-        query = PreAuthKeysModel.query.with_entities(
-            PreAuthKeysModel.id,
-            PreAuthKeysModel.key,
-            UserModel.name,
-            func.strftime('%Y-%m-%d %H:%M:%S', PreAuthKeysModel.created_at,'localtime').label('create_time'),
-            func.strftime('%Y-%m-%d %H:%M:%S', PreAuthKeysModel.expiration,'localtime').label('expiration'),
+        query = PreAuthKeys.query.with_entities(
+            PreAuthKeys.id,
+            PreAuthKeys.key,
+            Users.name,
+            func.strftime('%Y-%m-%d %H:%M:%S', PreAuthKeys.created_at,'localtime').label('create_time'),
+            func.strftime('%Y-%m-%d %H:%M:%S', PreAuthKeys.expiration,'localtime').label('expiration'),
             # 可以添加其他需要的字段
-        ) .join(UserModel, PreAuthKeysModel.user_id == UserModel.id)
+        ) .join(Users, PreAuthKeys.user_id == Users.id)
         # 判断用户角色
         if current_user.role != 'manager':
             # 如果不是 manager，只查询当前用户的节点信息
-            query = query.filter(PreAuthKeysModel.user_id == current_user.id)
+            query = query.filter(PreAuthKeys.user_id == current_user.id)
 
         pagination = query.paginate(page=page, per_page=per_page, error_out=False)
         PreAuthKeys_list = [row._asdict() for row in pagination.items]
@@ -249,23 +256,21 @@ class DatabaseManager:
         )
     
     def getRoutePagination(self,current_user,page=1,per_page=10):
-        query = RouteModel.query.with_entities(
-            RouteModel.id,
-            UserModel.name,
-            NodeModel.given_name.label('NodeName'),
-            RouteModel.prefix.label('route'),
-            RouteModel.enabled.label('enable'),
-            func.strftime('%Y-%m-%d %H:%M:%S', RouteModel.created_at,'localtime').label('createTime')
+        query = Nodes.query.with_entities(
+            Nodes.id,
+            Nodes.hostname,
+            Nodes.given_name.label('NodeName'),
+            Nodes.approved_routes.label('route'),
+            func.strftime('%Y-%m-%d %H:%M:%S', Nodes.expiry,'localtime').label('expiryTime'),
+            func.strftime('%Y-%m-%d %H:%M:%S', Nodes.created_at,'localtime').label('createTime')
             # 可以添加其他需要的字段
         ).join(
-            NodeModel, RouteModel.node_id == NodeModel.id  # 假设 RouteModel 通过 node_id 关联 NodeModel
-        ).join(
-            UserModel, NodeModel.user_id == UserModel.id
+            Users, Nodes.user_id == Users.id
         )
         # 判断用户角色
         if current_user.role != 'manager':
             # 如果不是 manager，只查询当前用户的节点信息
-            query = query.filter(NodeModel.user_id == current_user.id)
+            query = query.filter(Nodes.user_id == current_user.id)
 
         pagination = query.paginate(page=page, per_page=per_page, error_out=False)
         routes = pagination.items
@@ -282,14 +287,14 @@ class DatabaseManager:
 
     def getUserPagination(self,page=1, per_page=10):
         # 使用 func.strftime 格式化时间字段
-        query = UserModel.query.with_entities(
-            UserModel.id,
-            UserModel.name.label('userName'),
-            func.strftime('%Y-%m-%d %H:%M:%S', UserModel.created_at, ).label('createTime'),
-            UserModel.cellphone,
-            func.strftime('%Y-%m-%d %H:%M:%S', UserModel.expire, ).label('expire'),
-            UserModel.enable,
-            UserModel.role
+        query = Users.query.with_entities(
+            Users.id,
+            Users.name.label('userName'),
+            func.strftime('%Y-%m-%d %H:%M:%S', Users.created_at, ).label('createTime'),
+            Users.cellphone,
+            func.strftime('%Y-%m-%d %H:%M:%S', Users.expire, ).label('expire'),
+            Users.enable,
+            Users.role
         )
         pagination = query.paginate(page=page, per_page=per_page, error_out=False)
         users = pagination.items
@@ -303,7 +308,7 @@ class DatabaseManager:
         )
     
     def updateUserExpire(self,user_id,new_expire):
-        user=UserModel.query.filter_by(id=user_id).first()
+        user=Users.query.filter_by(id=user_id).first()
         user.expire = new_expire
         db.session.commit()
         return ResponseResult(
@@ -315,7 +320,7 @@ class DatabaseManager:
         )
     
     def userEnable(self,user_id,enable):
-        user = UserModel.query.filter_by(id=user_id).first()
+        user = Users.query.filter_by(id=user_id).first()
         if (user.role == 'manager'):
             return ResponseResult(
             code='1',
@@ -342,7 +347,7 @@ class DatabaseManager:
         )
     
     def delUser(self,user_id):
-        user = UserModel.query.filter_by(id=user_id).first()
+        user = Users.query.filter_by(id=user_id).first()
         db.session.delete(user)
         db.session.commit()
         return ResponseResult(
@@ -358,7 +363,7 @@ class DatabaseManager:
     def userLoader(self,username):
         try:
             # 根据用户名查询数据库中的用户
-            user = UserModel.query.filter_by(id=username).first()
+            user = Users.query.filter_by(id=username).first()
             if user:
                 return user
             return None
@@ -370,7 +375,7 @@ class DatabaseManager:
     def recordLog(self,user_id,log_content):
         try:
             # 创建日志记录实例
-            new_log = LogModel(
+            new_log = Logs(
                 user_id=user_id,
                 content=log_content,
                 created_at=datetime.now()

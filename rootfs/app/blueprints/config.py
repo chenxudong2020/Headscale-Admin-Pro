@@ -1,9 +1,8 @@
 import json
-from flask_login import login_required
+from flask_login import login_required # type: ignore
 from exts import db
 from login_setup import role_required
-from models import UserModel,  ConfigModel
-from flask import Blueprint,  request
+from flask import Blueprint,  request # type: ignore
 from database import DatabaseManager,ResponseResult
 
 bp = Blueprint("config", __name__, url_prefix='/api/config')

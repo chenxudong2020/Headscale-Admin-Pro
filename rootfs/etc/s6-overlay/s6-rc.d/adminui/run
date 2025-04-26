@@ -13,4 +13,7 @@ APP_PY_PATH="/app/config.py"
 TOKEN_VALUE="$BEARER_TOKEN"
 sed -i '/^BEARER_TOKEN/d' "$APP_PY_PATH"
 echo "BEARER_TOKEN='$TOKEN_VALUE'" >> "$APP_PY_PATH"
-python3 /app/app.py
+# 检测到headscale启动之后再启动python3
+exec \
+    /command/s6-notifyoncheck -d -n 300 -w 1000 -c "nc -z localhost 8080" \
+    python3 /app/app.py

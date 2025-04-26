@@ -1,12 +1,12 @@
 import json
-from flask_login import login_required
+from flask_login import login_required # type: ignore
 from exts import db
+from extmodels import Policies
 from login_setup import role_required
-from models import ACLModel
-from flask import Blueprint,  request
+from flask import Blueprint,  request # type: ignore
 from utils import reload_headscale,fecth_headscale,set_headscale
 from database import DatabaseManager,ResponseResult
-
+from flask_login import LoginManager, current_user # type: ignore
 bp = Blueprint("acl", __name__, url_prefix='/api/acl')
 
 
@@ -29,6 +29,7 @@ def getACL():
 def re_acl():
     acl_id = request.form.get('aclId')
     new_acl = request.form.get('newAcl')
+    user_id = current_user.id
     try:
         json.loads(new_acl)
     except json.JSONDecodeError:
@@ -39,7 +40,7 @@ def re_acl():
             data=[],
             totalRow={}
         ).to_dict()
-    DatabaseManager(db).re_acl(acl_id=acl_id,new_acl=new_acl)
+    DatabaseManager(db).re_acl(acl_id=acl_id,new_acl=new_acl,user_id=user_id)
     return ResponseResult(
             code="0",
             msg="更新成功",
@@ -54,8 +55,8 @@ def re_acl():
 @role_required("manager")
 def rewrite_acl():
     acl_path="/etc/headscale/acl.hujson"
-    acls = ACLModel.query.all()
-    acl_list = [json.loads(acl.acl) for acl in acls]
+    acls = Policies.query.all()
+    acl_list = [json.loads(acl.data) for acl in acls]
     acl_data = {
         "acls": acl_list
     }

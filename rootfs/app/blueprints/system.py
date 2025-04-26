@@ -1,8 +1,8 @@
 import math
 import os
 
-from flask_login import login_required
-from flask import Blueprint, json
+from flask_login import login_required # type: ignore
+from flask import Blueprint, json # type: ignore
 from utils import get_sys_info, get_data_record
 
 bp = Blueprint("system", __name__, url_prefix='/api/system')

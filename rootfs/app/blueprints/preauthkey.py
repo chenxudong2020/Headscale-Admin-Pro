@@ -1,8 +1,9 @@
 from datetime import datetime, timedelta
-from flask_login import current_user, login_required
-import requests
-from flask import Blueprint, render_template, request, session, make_response, g, redirect, url_for, jsonify, \
-    current_app
+from flask_login import current_user, login_required # type: ignore
+import requests # type: ignore
+from flask import Blueprint, render_template, request # type: ignore
+from flask import session, make_response, g, redirect, url_for, jsonify, current_app # type: ignore
+    
 
 from database import DatabaseManager,ResponseResult
 from exts import db

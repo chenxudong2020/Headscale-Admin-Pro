@@ -1,11 +1,10 @@
 from datetime import datetime
-from flask_login import current_user, login_required
-from sqlalchemy import func
+from flask_login import current_user, login_required # type: ignore
+from sqlalchemy import func # type: ignore
 from exts import db
 from login_setup import role_required
-from models import UserModel
-from flask import Blueprint, request
-from werkzeug.security import check_password_hash
+from flask import Blueprint, request # type: ignore
+from werkzeug.security import check_password_hash # type: ignore
 from database import DatabaseManager,ResponseResult
 from exts import db
 

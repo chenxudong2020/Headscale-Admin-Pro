@@ -1,7 +1,7 @@
 from datetime import timedelta
 import os
-from sqlalchemy import event
-import yaml
+from sqlalchemy import event # type: ignore
+import yaml # type: ignore
 
 SQLALCHEMY_DATABASE_URI = 'sqlite:////var/lib/headscale/db.sqlite'
 SECRET_KEY = 'SFhkrGKQL2yB9F' # respose解码

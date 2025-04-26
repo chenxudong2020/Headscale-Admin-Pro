@@ -69,12 +69,12 @@
       ,page: true
       ,cols: device.mobile?[[
            {field:'id', title:'ID', width:10, unresize: true, sort: true, totalRowText: '合计：'},
-           {field:'userName', title:'用户名',totalRow: '{{= d.TOTAL_ROW.count   }} 😊'},
+           {field:'userName', title:'用户名',width:180,totalRow: '{{= d.TOTAL_ROW.count   }} 😊'},
            {field:'acl', title:'ACL',edit: 'text'}
       ]]:[[
         {type: 'checkbox'}
         ,{field:'id', title:'ID', width:10, unresize: true, sort: true, totalRowText: '合计：'}
-        ,{field:'userName', title:'用户名',width:180,totalRow: '{{= d.TOTAL_ROW.count   }} 😊'}
+        {field:'userName', title:'用户名',width:180,totalRow: '{{= d.TOTAL_ROW.count   }} 😊'},
         ,{field:'acl', title:'ACL',width:800,edit: 'text',event:'aclEdit'}
     
       ]]
@@ -162,7 +162,6 @@
         break;
         case 'reload':
           var data = checkStatus.data;
-          // table.reload('test-table-index',true);
           $.ajax({
             url:'/api/acl/reload',
             type: 'post',

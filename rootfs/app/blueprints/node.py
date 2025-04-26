@@ -1,14 +1,14 @@
 import json
-from flask_login import current_user, login_required
-from sqlalchemy import func
-import requests
+from flask_login import current_user, login_required # type: ignore
+from sqlalchemy import func # type: ignore
+import requests # type: ignore
 from database import DatabaseManager,ResponseResult
 from exts import db
 
 from login_setup import role_required
-from models import UserModel,NodeModel
-from flask import Blueprint, render_template,request, session, make_response, g, redirect, url_for, jsonify, \
-    current_app
+from flask import Blueprint, render_template,request,  # type: ignore
+from flask import session, make_response, g, redirect, url_for, jsonify, current_app # type: ignore
+    
 
 bp = Blueprint("node", __name__, url_prefix='/api/node')
 bp_node = Blueprint("bp_node", __name__)

@@ -1,11 +1,11 @@
 from datetime import datetime, timedelta
 from utils import record_log, reload_headscale,rate_limit
-from flask_login import login_user, logout_user, current_user, login_required
+from flask_login import login_user, logout_user, current_user, login_required # type: ignore
 from exts import db
-from models import UserModel, ACLModel
-from flask import make_response,Blueprint, render_template, request, session,  redirect, url_for
+from extmodels import Users, Nodes,Policies
+from flask import make_response,Blueprint, render_template, request, session,  redirect, url_for # type: ignore
 from .forms import RegisterForm, LoginForm, PasswdForm
-from werkzeug.security import generate_password_hash
+from werkzeug.security import generate_password_hash # type: ignore
 from .get_captcha import get_captcha_code_and_content
 from database import DatabaseManager,ResponseResult
 bp = Blueprint("auth", __name__, url_prefix='/')
@@ -61,9 +61,9 @@ def reg():
                 # 新用户注册默认15天后到期
                 expire = create_time + timedelta(days=15)
             try:    
-                user = UserModel(name=username,password = password,created_at=create_time,updated_at=create_time,expire=expire,cellphone=phone_number,role=role,enable=enable)
+                user = Users(name=username,password = password,created_at=create_time,updated_at=create_time,expire=expire,cellphone=phone_number,role=role,enable=enable)
                 newAcl = f'{{"action": "accept","src": ["{username}"],"dst": ["{username}:*"]}}'
-                new_acl = ACLModel(acl=newAcl, user_id=user.id)
+                new_acl = Policies(data=newAcl,user_id=user.id)
                 DatabaseManager(db).register_user(user=user,new_acl=new_acl)
             except Exception as e:
                 return ResponseResult(

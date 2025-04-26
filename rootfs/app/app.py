@@ -1,4 +1,4 @@
-from flask import Flask,  render_template
+from flask import Flask,  render_template # type: ignore
 import config, os
 from exts import db, enable_sqlite_foreign_keys
 from blueprints.auth import bp as auth_bp
@@ -12,9 +12,9 @@ from blueprints.acl import bp as acl_bp
 from blueprints.preauthkey import bp as preauthkey_bp
 from blueprints.log import bp as log_bp
 from blueprints.config import bp as config_bp
-from flask_migrate import Migrate
+from flask_migrate import Migrate # type: ignore
 from login_setup import init_login_manager
-from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.schedulers.background import BackgroundScheduler # type: ignore
 from utils import  get_data_record,refresh_apikey
 from datetime import datetime
 import atexit
@@ -35,7 +35,7 @@ with app.app_context():
     enable_sqlite_foreign_keys(db.engine)
 
 
-# migrate = Migrate(app, db)
+migrate = Migrate(app, db)
 
 app.register_blueprint(auth_bp)
 app.register_blueprint(admin_bp)

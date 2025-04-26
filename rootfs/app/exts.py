@@ -1,5 +1,5 @@
-from flask_sqlalchemy import  SQLAlchemy
-from sqlalchemy import event
+from flask_sqlalchemy import  SQLAlchemy # type: ignore
+from sqlalchemy import event # type: ignore
 db = SQLAlchemy()
 
 def enable_sqlite_foreign_keys(db_engine):

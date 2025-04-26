@@ -1,5 +1,5 @@
-from flask_login import login_required, current_user
-from flask import Blueprint,  request
+from flask_login import login_required, current_user # type: ignore
+from flask import Blueprint,  request # type: ignore
 from database import DatabaseManager
 from exts import db
 bp = Blueprint("log", __name__, url_prefix='/api/log')

@@ -1,6 +1,6 @@
 from io import BytesIO
 from random import choices
-from captcha.image import ImageCaptcha
+from captcha.image import ImageCaptcha # type: ignore
 from typing import Tuple
 
  

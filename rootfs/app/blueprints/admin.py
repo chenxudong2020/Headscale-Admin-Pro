@@ -1,10 +1,9 @@
-from flask_login import login_required, current_user
+from flask_login import login_required, current_user # type: ignore
 from login_setup import role_required
-from models import UserModel
-from flask import Blueprint, render_template, request, session, make_response, g, redirect, url_for, current_app
+from flask import Blueprint, render_template, request, session, make_response, g, redirect, url_for, current_app # type: ignore
 from .forms import RegisterForm, LoginForm
 from blueprints.forms import RegisterForm
-from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash # type: ignore
 from .get_captcha import get_captcha_code_and_content
 bp = Blueprint("admin", __name__, url_prefix='/admin')
 

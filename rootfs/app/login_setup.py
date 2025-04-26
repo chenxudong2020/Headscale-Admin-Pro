@@ -1,8 +1,8 @@
 # login_setup.py
 import functools
 
-from flask import redirect, url_for, render_template
-from flask_login import LoginManager, current_user
+from flask import redirect, url_for, render_template # type: ignore
+from flask_login import LoginManager, current_user # type: ignore
 from database import DatabaseManager
 from exts import db
 
