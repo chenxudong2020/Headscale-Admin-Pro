@@ -81,7 +81,7 @@ class DatabaseManager:
           raise TypeError("传入的acl对象不是一个有效的 SQLAlchemy 模型实例")
         try:
             with self.db.session.begin():
-                self.db.session.merge(user)
+                self.db.session.add(user)
                 self.db.session.flush()
                 self.db.session.add(acl)
         except Exception as e:

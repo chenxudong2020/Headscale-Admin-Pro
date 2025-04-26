@@ -64,22 +64,8 @@ def reg():
                 # 新用户注册默认15天后到期
                 expire = create_time + timedelta(days=15)
             try: 
-                server_host = current_app.config['SERVER_HOST']
-                bearer_token = current_app.config['BEARER_TOKEN']
-                headers = {
-                    'Authorization': f'Bearer {bearer_token}'
-                }
-                json_data =  {
-                  "name": username,
-                  "displayName": username,
-                  "email": "NULL",
-                  "pictureUrl": "NULL"
-                }
-                url = f'{server_host}/api/v1/user'  # 替换为实际的目标 URL
-                response = requests.post(url, headers=headers,data=json_data)
-                result_reg =  response.text 
-                user_id = json.loads(result_reg)['user']['id']
-                user = Users(id=user_id,name=username,password = password,created_at=create_time,updated_at=create_time,expire=expire,cellphone=phone_number,role=role,enable=enable)
+                
+                user = Users(name=username,password = password,created_at=create_time,updated_at=create_time,expire=expire,cellphone=phone_number,role=role,enable=enable)
                 newAcl = f'{{"action": "accept","src": ["{username}"],"dst": ["{username}:*"]}}'
                 new_acl = Policies(data=newAcl,user_id=user.id)
                 DatabaseManager(db).register_user(user=user,new_acl=new_acl)
