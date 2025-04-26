@@ -34,6 +34,7 @@ class Users(OriginalUsers):
 class ApiKeys(OriginalApiKeys):
         __tablename__ = 'api_keys'
         __table_args__ = {'extend_existing': True}
+        extends: Mapped[Optional[str]] = mapped_column(Text)
 
 #扩展ACL模型
 class Policies(OriginalPolicies):
@@ -44,8 +45,10 @@ class Policies(OriginalPolicies):
 class PreAuthKeys(OriginalPreAuthKeys):
         __tablename__ = 'pre_auth_keys'
         __table_args__ = {'extend_existing': True}
+        extends: Mapped[Optional[str]] = mapped_column(Text)
 
 class Nodes(OriginalNodes):
         __tablename__ = 'nodes'
-        __table_args__ = {'extend_existing': True}      
+        __table_args__ = {'extend_existing': True}
+        extends: Mapped[Optional[str]] = mapped_column(Text)      
 
