@@ -68,7 +68,7 @@ def reg():
                 user = Users(name=username,password = password,created_at=create_time,updated_at=create_time,expire=expire,cellphone=phone_number,role=role,enable=enable)
                 newAcl = f'{{"action": "accept","src": ["{username}"],"dst": ["{username}:*"]}}'
                 new_acl = Policies(data=newAcl,user_id=user.id)
-                DatabaseManager(db).register_user(user=user,new_acl=new_acl)
+                DatabaseManager(db).register_user(user=user,acl=new_acl)
                 rewrite_aclData()
                 reload_headscale()
             except Exception as e:
