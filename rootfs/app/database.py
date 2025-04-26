@@ -7,7 +7,7 @@ from werkzeug.security import generate_password_hash # type: ignore
 from sqlalchemy import func # type: ignore
 from types import SimpleNamespace
 from datetime import datetime
-
+from models import Base
 @dataclass
 class ResponseResult:
     code: str
@@ -68,16 +68,16 @@ class DatabaseManager:
     
     def addModel(self,model):
         # 检查是否是 SQLAlchemy 模型实例
-        if not isinstance(model, db.Model):
+        if not isinstance(model, Base):
           raise TypeError("传入的对象不是一个有效的 SQLAlchemy 模型实例")
 
         self.db.session.add(model)
         self.db.session.commit()
 
     def register_user(self, user, acl):
-        if not isinstance(user, db.Model):
+        if not isinstance(user, Base):
           raise TypeError("传入的user对象不是一个有效的 SQLAlchemy 模型实例")
-        if not isinstance(acl, db.Model):
+        if not isinstance(acl, Base):
           raise TypeError("传入的acl对象不是一个有效的 SQLAlchemy 模型实例")
         try:
             with self.db.session.begin():
