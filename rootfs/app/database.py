@@ -77,12 +77,11 @@ class DatabaseManager:
     def register_user(self, user, acl):
         if not isinstance(user, Base):
           raise TypeError("传入的user对象不是一个有效的 SQLAlchemy 模型实例")
-        if not isinstance(acl, Base):
-          raise TypeError("传入的acl对象不是一个有效的 SQLAlchemy 模型实例")
         try:
                 self.db.session.add(user)
                 self.db.session.flush()
-                self.db.session.add(acl)
+                new_acl = Policies(data=acl,user_id=user.id)
+                self.db.session.add(new_acl)
                 self.db.session.commit()
         except Exception as e:
             self.db.session.rollback()
@@ -401,5 +400,5 @@ class DatabaseManager:
             return policies
         except Exception as e:
             print(f"Error occurred while fetching policies: {e}")
-            return []
+            raise e 
    

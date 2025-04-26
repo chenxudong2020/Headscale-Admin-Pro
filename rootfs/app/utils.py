@@ -173,12 +173,12 @@ def refresh_apikey():
 
 def rewrite_aclData():
     acl_path="/etc/headscale/acl.hujson"
-    acls = DatabaseManager(db).getAclAll()
-    acl_list = [json.loads(acl.data) for acl in acls]
-    acl_data = {
-        "acls": acl_list
-    }
     try:
+        acls = DatabaseManager(db).getAclAll()
+        acl_list = [json.loads(acl.data) for acl in acls]
+        acl_data = {
+            "acls": acl_list
+        }
         with open(acl_path, 'w') as f:
             json.dump(acl_data, f, indent=4)
             return acl_data
