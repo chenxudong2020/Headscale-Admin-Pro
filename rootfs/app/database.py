@@ -80,10 +80,10 @@ class DatabaseManager:
         if not isinstance(acl, Base):
           raise TypeError("传入的acl对象不是一个有效的 SQLAlchemy 模型实例")
         try:
-            with self.db.session.begin():
                 self.db.session.add(user)
                 self.db.session.flush()
                 self.db.session.add(acl)
+                self.db.session.commit()
         except Exception as e:
             self.db.session.rollback()
             raise e
@@ -391,7 +391,7 @@ class DatabaseManager:
             print(f"日志记录失败: {e}")
             return False
         
-    def getAclAll():
+    def getAclAll(self):
         try:
             # 查询Policies表中的所有记录
             policies = Policies.query.all()
