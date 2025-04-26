@@ -6,7 +6,7 @@ from database import DatabaseManager,ResponseResult
 from exts import db
 
 from login_setup import role_required
-from flask import Blueprint, render_template,request,  # type: ignore
+from flask import Blueprint, render_template,request  # type: ignore
 from flask import session, make_response, g, redirect, url_for, jsonify, current_app # type: ignore
     
 
