@@ -3,13 +3,16 @@ from utils import record_log, reload_headscale,rate_limit
 from flask_login import login_user, logout_user, current_user, login_required # type: ignore
 from exts import db
 from models import Users, Nodes,Policies
-from flask import make_response,Blueprint, render_template, request, session,  redirect, url_for # type: ignore
+from flask import current_app,make_response,Blueprint, render_template, request, session,  redirect, url_for # type: ignore
 from .forms import RegisterForm, LoginForm, PasswdForm
 from werkzeug.security import generate_password_hash # type: ignore
 from .get_captcha import get_captcha_code_and_content
 from database import DatabaseManager,ResponseResult
-bp = Blueprint("auth", __name__, url_prefix='/')
+import requests # type: ignore
+import json
+from utils import rewrite_aclData,reload_headscale
 
+bp = Blueprint("auth", __name__, url_prefix='/')
 
 @bp.route('/')
 def index():
@@ -60,11 +63,28 @@ def reg():
                 role = "user"
                 # 新用户注册默认15天后到期
                 expire = create_time + timedelta(days=15)
-            try:    
-                user = Users(name=username,password = password,created_at=create_time,updated_at=create_time,expire=expire,cellphone=phone_number,role=role,enable=enable)
+            try: 
+                server_host = current_app.config['SERVER_HOST']
+                bearer_token = current_app.config['BEARER_TOKEN']
+                headers = {
+                    'Authorization': f'Bearer {bearer_token}'
+                }
+                json_data =  {
+                  "name": username,
+                  "displayName": username,
+                  "email": "NULL",
+                  "pictureUrl": "NULL"
+                }
+                url = f'{server_host}/api/v1/user'  # 替换为实际的目标 URL
+                response = requests.post(url, headers=headers,data=json_data)
+                result_reg =  response.text 
+                user_id = json.loads(result_reg)['user']['id']
+                user = Users(id=user_id,name=username,password = password,created_at=create_time,updated_at=create_time,expire=expire,cellphone=phone_number,role=role,enable=enable)
                 newAcl = f'{{"action": "accept","src": ["{username}"],"dst": ["{username}:*"]}}'
                 new_acl = Policies(data=newAcl,user_id=user.id)
                 DatabaseManager(db).register_user(user=user,new_acl=new_acl)
+                rewrite_aclData()
+                reload_headscale()
             except Exception as e:
                 return ResponseResult(
                             code="1",

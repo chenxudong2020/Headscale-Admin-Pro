@@ -4,7 +4,7 @@ from exts import db
 from models import Policies
 from login_setup import role_required
 from flask import Blueprint,  request # type: ignore
-from utils import reload_headscale,fecth_headscale,set_headscale
+from utils import reload_headscale,fecth_headscale,set_headscale,rewrite_aclData
 from database import DatabaseManager,ResponseResult
 from flask_login import LoginManager, current_user # type: ignore
 bp = Blueprint("acl", __name__, url_prefix='/api/acl')
@@ -54,15 +54,8 @@ def re_acl():
 @login_required
 @role_required("manager")
 def rewrite_acl():
-    acl_path="/etc/headscale/acl.hujson"
-    acls = Policies.query.all()
-    acl_list = [json.loads(acl.data) for acl in acls]
-    acl_data = {
-        "acls": acl_list
-    }
     try:
-        with open(acl_path, 'w') as f:
-            json.dump(acl_data, f, indent=4)
+       acl_data=rewrite_aclData() 
     except Exception as e:
         return ResponseResult(
             code="1",

@@ -81,7 +81,7 @@ class DatabaseManager:
           raise TypeError("传入的acl对象不是一个有效的 SQLAlchemy 模型实例")
         try:
             with self.db.session.begin():
-                self.db.session.add(user)
+                self.db.session.merge(user)
                 self.db.session.flush()
                 self.db.session.add(acl)
         except Exception as e:
@@ -390,3 +390,16 @@ class DatabaseManager:
             self.db.session.rollback()
             print(f"日志记录失败: {e}")
             return False
+        
+    def getAclAll():
+        try:
+            # 查询Policies表中的所有记录
+            policies = Policies.query.all()
+            if not policies:
+              print("No policies found.")
+              return []
+            return policies
+        except Exception as e:
+            print(f"Error occurred while fetching policies: {e}")
+            return []
+   

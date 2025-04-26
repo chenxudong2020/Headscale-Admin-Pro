@@ -25,7 +25,7 @@
 
             <script type="text/html" id="toolbarDemo">
               <div class="layui-btn-container">
-              <button class="layui-btn layui-btn-sm" lay-event="addNode">添加设备</button>
+                <button id="switchButton" class="layui-btn layui-btn-sm" lay-event=""></button>
                 <button class="layui-btn layui-btn-sm" lay-event="reload">刷新</button>
                 {% endraw %}
                 <input type="hidden" name="message" value="{{ message }}">
@@ -128,8 +128,17 @@
     });
 
 
-
-
+    function keepButtonStatus(){
+        // 判断是否在iframe内，如果不在则显示主页按钮
+        if (window.top !== window) {
+            $('#switchButton').attr('lay-event', 'addNode');
+            $('#switchButton').text('添加节点');
+        }else{
+            $('#switchButton').attr('lay-event', 'goHome');
+            $('#switchButton').text('返回主页');
+        }
+    }
+    keepButtonStatus()
 
     //事件-单元格编辑
     table.on('edit(test-table-index)', function(obj){
@@ -194,6 +203,8 @@
       var checkStatus = table.checkStatus(id);
       var othis = lay(this);
       switch(obj.event){
+        case 'goHome':
+          window.location.href = '/admin';
         case 'addNode':
           layer.prompt({title: '请输入节点id'}, function(value, index, elem){
             if(value === '') return elem.focus();

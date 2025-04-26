@@ -169,3 +169,19 @@ def refresh_apikey():
             file.write(apikey)
     except subprocess.CalledProcessError as e:
         print(f"Error exec to_refresh_apikey: {e.stderr}")
+
+
+def rewrite_aclData():
+    acl_path="/etc/headscale/acl.hujson"
+    acls = DatabaseManager(db).getAclAll()
+    acl_list = [json.loads(acl.data) for acl in acls]
+    acl_data = {
+        "acls": acl_list
+    }
+    try:
+        with open(acl_path, 'w') as f:
+            json.dump(acl_data, f, indent=4)
+            return acl_data
+    except Exception as e:
+         print(f"rewrite_acl 失败: {e}")
+         raise e    

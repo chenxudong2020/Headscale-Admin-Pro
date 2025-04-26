@@ -16,16 +16,16 @@ def admin():
     # 定义每个菜单项及其对应的可访问角色
 
     menu_items = {
-        'console': {'html': '<dd data-name="console"><a lay-href="console">控制台</a></dd>', 'roles': ['manager']},
-        'user': {'html': '<dd data-name="user"><a lay-href="user">用户</a></dd>', 'roles': ['manager']},
-        'node': {'html': '<dd data-name="node"><a lay-href="node">节点</a></dd>', 'roles': ['manager', 'user']},
-        'route': {'html': '<dd data-name="route"><a lay-href="route">路由</a></dd>', 'roles': ['manager', 'user']},
-        'deploy': {'html': '<dd data-name="deploy"><a lay-href="deploy">指令</a></dd>', 'roles': ['manager', 'user']},
-        'help': {'html': '<dd data-name="help"><a lay-href="help">文档</a></dd>', 'roles': ['manager', 'user']},
-        'acl': {'html': '<dd data-name="acl"><a lay-href="acl">ACL</a></dd>', 'roles': ['manager']},
-        'config': {'html': '<dd data-name="config"><a lay-href="config">配置</a></dd>', 'roles': ['manager']},
-        'preauthkey': {'html': '<dd data-name="preauthkey"><a lay-href="preauthkey">密钥</a></dd>', 'roles': ['manager', 'user']},
-        'log': {'html': '<dd data-name="log"><a lay-href="log">日志</a></dd>', 'roles': ['manager', 'user']}
+        'console': {'html': '<dd data-name="console"><a lay-href="console"><i class="layui-icon layui-icon-console"></i>控制台</a></dd>', 'roles': ['manager']},
+        'user': {'html': '<dd data-name="user"><a lay-href="user"><i class="layui-icon layui-icon-user"></li>用户</a></dd>', 'roles': ['manager']},
+        'node': {'html': '<dd data-name="node"><a lay-href="node"><i class="layui-icon layui-icon-website"></i>节点</a></dd>', 'roles': ['manager', 'user']},
+        'route': {'html': '<dd data-name="route"><a lay-href="route"><i class="layui-icon layui-icon-senior"></i>路由</a></dd>', 'roles': ['manager', 'user']},
+        'deploy': {'html': '<dd data-name="deploy"><a lay-href="deploy"><i class="layui-icon layui-icon-fonts-code"></i>指令</a></dd>', 'roles': ['manager', 'user']},
+        'help': {'html': '<dd data-name="help"><a lay-href="help"><i class="layui-icon layui-icon-read"></i>文档</a></dd>', 'roles': ['manager', 'user']},
+        'acl': {'html': '<dd data-name="acl"><a lay-href="acl"><i class="layui-icon layui-icon-auz"></i>ACL</a></dd>', 'roles': ['manager']},
+        'config': {'html': '<dd data-name="config"><a lay-href="config"><i class="layui-icon layui-icon-set"></i>配置</a></dd>', 'roles': ['manager']},
+        'preauthkey': {'html': '<dd data-name="preauthkey"><a lay-href="preauthkey"><i class="layui-icon layui-icon-key"></i>密钥</a></dd>', 'roles': ['manager', 'user']},
+        'log': {'html': '<dd data-name="log"><a lay-href="log"><i class="layui-icon layui-icon-form"></i>日志</a></dd>', 'roles': ['manager', 'user']}
     }
 
     # 获取当前用户角色

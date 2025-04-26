@@ -72,10 +72,10 @@
            {field:'userName', title:'用户名',width:180,totalRow: '{{= d.TOTAL_ROW.count   }} 😊'},
            {field:'acl', title:'ACL',edit: 'text'}
       ]]:[[
-        {type: 'checkbox'}
-        ,{field:'id', title:'ID', width:10, unresize: true, sort: true, totalRowText: '合计：'}
+        {type: 'checkbox'},
+        {field:'id', title:'ID', width:10, unresize: true, sort: true, totalRowText: '合计：'},
         {field:'userName', title:'用户名',width:180,totalRow: '{{= d.TOTAL_ROW.count   }} 😊'},
-        ,{field:'acl', title:'ACL',width:800,edit: 'text',event:'aclEdit'}
+        {field:'acl', title:'ACL',width:800,edit: 'text',event:'aclEdit'}
     
       ]]
       ,error: function(res, msg){
