@@ -30,7 +30,7 @@ class DatabaseManager:
     # acl分页查询
     def get_acl(self, page=1, per_page=10):
       # 使用分页查询并直接返回字典格式
-      pagination = Policies.query.with_entities(
+      pagination = self.db.session().query(
         Policies.id.label('id'),
         Policies.data.label('acl'),
         Users.name.label('userName')
@@ -47,14 +47,14 @@ class DatabaseManager:
         )
     
     def re_acl(self,acl_id,new_acl,user_id):
-        acl = Policies.query.filter_by(id=acl_id).first()
+        acl = self.db.session.query(Policies).filter_by(id=acl_id).first()
         acl.data = new_acl
         acl.user_id = user_id
-        db.session.commit()
+        self.db.session.commit()
 
 
     def getConfig(self):
-        config = Configs.query.first()
+        config = db.session.query(Configs).first()
         if not config:
             # 查询不到赋值默认值
             config =  Configs(acceptreg='1',acceptlogin='1',acceptnewlogin='1')
@@ -90,15 +90,15 @@ class DatabaseManager:
     
     #修改密码
     def password(self,new_password,current_user):
-        user = Users.query.filter_by(id=current_user.id).first()
+        user = self.db.session.query(Users).filter_by(id=current_user.id).first()
         user.password = generate_password_hash(new_password)
-        db.session.commit()
+        self.db.session.commit()
 
 
        # 获取系统配置
     def getSysConfig(self):
       # 使用分页查询并直接返回字典格式
-      config = Configs.query.with_entities(
+      config = self.db.session.query(
            Configs.id,
            Configs.acceptlogin,
            Configs.acceptreg,
@@ -122,20 +122,20 @@ class DatabaseManager:
           ) 
 
     def updateConfig(self,acceptlogin,acceptreg,acceptnewlogin):
-        config = Configs.query.first()         
+        config = self.db.session.query(Configs).first()         
         if config:
             if acceptlogin:
               config.acceptlogin = acceptlogin
               if acceptlogin == '1':
                     # 禁用登录则更新全部user表的数据
-                    users = Users.query.filter(Users.role != 'manager').all()
+                    users =self.db.session.query(Users).filter(Users.role != 'manager').all()
                     for user in users:
                         user.enable = '0'
             if acceptreg:   
               config.acceptreg = acceptreg
             if acceptnewlogin:    
               config.acceptnewlogin = acceptnewlogin
-            db.session.commit()
+            self.db.session.commit()
             return ResponseResult(
                 code="0",
                 msg="更新成功",
@@ -153,11 +153,11 @@ class DatabaseManager:
             )
 
     def getUserByName(self,name):
-        return Users.query.filter_by(name=name).first()
+        return self.db.session.query(Users).filter_by(name=name).first()
         
     # 分页获取日志列表
     def getLogPagination(self,current_user,page=1,per_page=10):
-        query = Logs.query.with_entities(
+        query = self.db.session.query(
         Logs.id,
         Logs.content,
         Users.name,
@@ -180,7 +180,7 @@ class DatabaseManager:
         )
     
     def getNodePagination(self,current_user,page=1,per_page=10):
-        query = Nodes.query.with_entities(
+        query = self.db.session.query(
             Nodes.id.label('id'),
             Users.name.label('userName'),
             Nodes.given_name.label('name'),
@@ -226,12 +226,12 @@ class DatabaseManager:
         )
     
     def getNodeById(self,machine_id):
-        return Nodes.query.filter_by(id=machine_id).first()
+        return self.db.session.query(Nodes).filter_by(id=machine_id).first()
     
 
 
     def getPreAuthKeyPagination(self,current_user,page=1,per_page=10):
-        query = PreAuthKeys.query.with_entities(
+        query = self.db.session.query(
             PreAuthKeys.id,
             PreAuthKeys.key,
             Users.name,
@@ -256,7 +256,7 @@ class DatabaseManager:
         )
     
     def getRoutePagination(self,current_user,page=1,per_page=10):
-        query = Nodes.query.with_entities(
+        query = self.db.session.query(
             Nodes.id,
             Nodes.hostname,
             Nodes.given_name.label('NodeName'),
@@ -287,7 +287,7 @@ class DatabaseManager:
 
     def getUserPagination(self,page=1, per_page=10):
         # 使用 func.strftime 格式化时间字段
-        query = Users.query.with_entities(
+        query = self.db.session.query(
             Users.id,
             Users.name.label('userName'),
             func.strftime('%Y-%m-%d %H:%M:%S', Users.created_at, ).label('createTime'),
@@ -308,9 +308,9 @@ class DatabaseManager:
         )
     
     def updateUserExpire(self,user_id,new_expire):
-        user=Users.query.filter_by(id=user_id).first()
+        user=self.db.session.query(Users).filter_by(id=user_id).first()
         user.expire = new_expire
-        db.session.commit()
+        self.db.session.commit()
         return ResponseResult(
             code="0",
             msg="更新成功",
@@ -320,7 +320,7 @@ class DatabaseManager:
         )
     
     def userEnable(self,user_id,enable):
-        user = Users.query.filter_by(id=user_id).first()
+        user = self.db.session.query(Users).filter_by(id=user_id).first()
         if (user.role == 'manager'):
             return ResponseResult(
             code='1',
@@ -337,7 +337,7 @@ class DatabaseManager:
             code='0'
             user.enable = 0
             msg = ('关闭成功')
-        db.session.commit()
+        self.db.session.commit()
         return ResponseResult(
             code=code,
             msg=msg,
@@ -347,9 +347,9 @@ class DatabaseManager:
         )
     
     def delUser(self,user_id):
-        user = Users.query.filter_by(id=user_id).first()
-        db.session.delete(user)
-        db.session.commit()
+        user = self.db.session.query(Users).filter_by(id=user_id).first()
+        self.db.session.delete(user)
+        self.db.session.commit()
         return ResponseResult(
             code="0",
             msg="删除成功",
@@ -363,7 +363,7 @@ class DatabaseManager:
     def userLoader(self,username):
         try:
             # 根据用户名查询数据库中的用户
-            user = Users.query.filter_by(id=username).first()
+            user = self.db.session.query(Users).filter_by(id=username).first()
             if user:
                 return user
             return None
@@ -381,12 +381,12 @@ class DatabaseManager:
                 created_at=datetime.now()
             )
             # 将实例添加到数据库会话
-            db.session.add(new_log)
+            self.db.session.add(new_log)
             # 提交会话以保存更改
-            db.session.commit()
+            self.db.session.commit()
             return True
         except Exception as e:
             # 若出现异常，回滚会话
-            db.session.rollback()
+            self.db.session.rollback()
             print(f"日志记录失败: {e}")
             return False
