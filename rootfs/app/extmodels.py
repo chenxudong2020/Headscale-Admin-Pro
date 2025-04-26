@@ -24,6 +24,7 @@ class Logs(Base):
 # 扩展用户模型
 class Users(OriginalUsers):
         __tablename__ = 'users'
+        __table_args__ = {'extend_existing': True}
         password: Mapped[Optional[str]] = mapped_column(Text)
         expire: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime)
         cellphone: Mapped[Optional[str]] = mapped_column(Text)
@@ -32,15 +33,19 @@ class Users(OriginalUsers):
 
 class ApiKeys(OriginalApiKeys):
         __tablename__ = 'api_keys'
+        __table_args__ = {'extend_existing': True}
 
 #扩展ACL模型
 class Policies(OriginalPolicies):
         __tablename__ = 'policies'
+        __table_args__ = {'extend_existing': True}
         user_id: Mapped[Optional[int]] = mapped_column(Integer)
 
 class PreAuthKeys(OriginalPreAuthKeys):
         __tablename__ = 'pre_auth_keys'
+        __table_args__ = {'extend_existing': True}
 
 class Nodes(OriginalNodes):
-        __tablename__ = 'nodes'      
+        __tablename__ = 'nodes'
+        __table_args__ = {'extend_existing': True}      
 
