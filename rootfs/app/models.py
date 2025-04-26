@@ -9,6 +9,24 @@ class Base(DeclarativeBase):
     pass
 
 
+
+# 新增系统配置表
+class Configs(Base):
+    __tablename__ = 'configs'
+    id: Mapped[Optional[int]] = mapped_column(Integer, primary_key=True,autoincrement=True)
+    acceptreg: Mapped[Optional[str]] = mapped_column(Text)
+    acceptlogin: Mapped[Optional[str]] = mapped_column(Text)
+    acceptnewlogin: Mapped[Optional[str]] = mapped_column(Text)
+
+# 新增系统日志表
+class Logs(Base):
+    __tablename__ = 'logs'
+    id: Mapped[Optional[int]] = mapped_column(Integer, primary_key=True,autoincrement=True)
+    user_id: Mapped[Optional[int]] = mapped_column(Integer)
+    content: Mapped[Optional[str]] = mapped_column(Text)
+    created_at: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime)
+
+
 class ApiKeys(Base):
     __tablename__ = 'api_keys'
     __table_args__ = (
@@ -40,6 +58,9 @@ class Policies(Base):
     updated_at: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime)
     deleted_at: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime)
     data: Mapped[Optional[str]] = mapped_column(Text)
+    user_id: Mapped[Optional[int]] = mapped_column(Integer)
+
+
 
 
 class Users(Base):
@@ -62,8 +83,16 @@ class Users(Base):
     provider: Mapped[Optional[str]] = mapped_column(Text)
     profile_pic_url: Mapped[Optional[str]] = mapped_column(Text)
 
+    password: Mapped[Optional[str]] = mapped_column(Text)
+    expire: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime)
+    cellphone: Mapped[Optional[str]] = mapped_column(Text)
+    role: Mapped[Optional[str]] = mapped_column(Text)
+    enable: Mapped[Optional[str]] = mapped_column(Text)
+
     pre_auth_keys: Mapped[List['PreAuthKeys']] = relationship('PreAuthKeys', back_populates='user')
     nodes: Mapped[List['Nodes']] = relationship('Nodes', back_populates='user')
+
+
 
 
 class PreAuthKeys(Base):

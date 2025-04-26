@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 from utils import record_log, reload_headscale,rate_limit
 from flask_login import login_user, logout_user, current_user, login_required # type: ignore
 from exts import db
-from extmodels import Users, Nodes,Policies
+from models import Users, Nodes,Policies
 from flask import make_response,Blueprint, render_template, request, session,  redirect, url_for # type: ignore
 from .forms import RegisterForm, LoginForm, PasswdForm
 from werkzeug.security import generate_password_hash # type: ignore

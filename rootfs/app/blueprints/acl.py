@@ -1,7 +1,7 @@
 import json
 from flask_login import login_required # type: ignore
 from exts import db
-from extmodels import Policies
+from models import Policies
 from login_setup import role_required
 from flask import Blueprint,  request # type: ignore
 from utils import reload_headscale,fecth_headscale,set_headscale

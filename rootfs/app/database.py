@@ -1,7 +1,7 @@
 import json
 from dataclasses import dataclass, asdict
 from exts import db
-from extmodels import Users,Policies,Configs,Logs,Nodes,PreAuthKeys
+from models import Users,Policies,Configs,Logs,Nodes,PreAuthKeys
 from typing import Any, List, Dict,Union
 from werkzeug.security import generate_password_hash # type: ignore
 from sqlalchemy import func # type: ignore
