@@ -88,7 +88,7 @@ def reg():
             except Exception as e:
                 return ResponseResult(
                             code="1",
-                            msg="注册失败,请稍后再试！",
+                            msg="注册失败,请稍后再试！"+str(e),
                             count=0,
                             data=[],
                             totalRow={}
