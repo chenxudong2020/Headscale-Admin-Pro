@@ -19,7 +19,6 @@ target_url: https://192.168.6.5:5000
 #
 # For production:
 # listen_addr: 0.0.0.0:8080
-# 不建议改8080端口
 listen_addr: 0.0.0.0:8080
 
 # Address to listen to /metrics, you may want
