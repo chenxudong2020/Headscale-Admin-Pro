@@ -1,6 +1,6 @@
 from sqlalchemy import DateTime, ForeignKey, Index, Integer, LargeBinary, Numeric, String, Text, text # type: ignore
 from typing import List, Optional
-
+from flask_login import UserMixin
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship # type: ignore
 import datetime
 import decimal
@@ -63,7 +63,7 @@ class Policies(Base):
 
 
 
-class Users(Base):
+class Users(Base,UserMixin):
     __tablename__ = 'users'
     __table_args__ = (
         Index('idx_name_no_provider_identifier', 'name', unique=True),
