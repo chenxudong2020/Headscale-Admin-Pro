@@ -62,8 +62,8 @@ class Users(Base):
     provider: Mapped[Optional[str]] = mapped_column(Text)
     profile_pic_url: Mapped[Optional[str]] = mapped_column(Text)
 
-    pre_auth_keys: Mapped[List['PreAuthKeys']] = relationship('extmodels.PreAuthKeys', back_populates='user')
-    nodes: Mapped[List['Nodes']] = relationship('extmodels.Nodes', back_populates='user')
+    pre_auth_keys: Mapped[List['PreAuthKeys']] = relationship('PreAuthKeys', back_populates='user')
+    nodes: Mapped[List['Nodes']] = relationship('Nodes', back_populates='user')
 
 
 class PreAuthKeys(Base):
@@ -79,8 +79,8 @@ class PreAuthKeys(Base):
     created_at: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime)
     expiration: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime)
 
-    user: Mapped[Optional['Users']] = relationship('extmodels.Users', back_populates='pre_auth_keys')
-    nodes: Mapped[List['Nodes']] = relationship('extmodels.Nodes', back_populates='auth_key')
+    user: Mapped[Optional['Users']] = relationship('Users', back_populates='pre_auth_keys')
+    nodes: Mapped[List['Nodes']] = relationship('Nodes', back_populates='auth_key')
 
 
 class Nodes(Base):
@@ -106,5 +106,5 @@ class Nodes(Base):
     updated_at: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime)
     deleted_at: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime)
 
-    auth_key: Mapped[Optional['PreAuthKeys']] = relationship('extmodels.PreAuthKeys', back_populates='nodes')
+    auth_key: Mapped[Optional['PreAuthKeys']] = relationship('PreAuthKeys', back_populates='nodes')
     user: Mapped[Optional['Users']] = relationship('Users', back_populates='nodes')
