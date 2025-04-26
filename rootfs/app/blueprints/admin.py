@@ -17,7 +17,7 @@ def admin():
 
     menu_items = {
         'console': {'html': '<dd data-name="console"><a lay-href="console"><i class="layui-icon layui-icon-console"></i>控制台</a></dd>', 'roles': ['manager']},
-        'user': {'html': '<dd data-name="user"><a lay-href="user"><i class="layui-icon layui-icon-user"></li>用户</a></dd>', 'roles': ['manager']},
+        'user': {'html': '<dd data-name="user"><a lay-href="user"><i class="layui-icon layui-icon-user"></i>用户</a></dd>', 'roles': ['manager']},
         'node': {'html': '<dd data-name="node"><a lay-href="node"><i class="layui-icon layui-icon-website"></i>节点</a></dd>', 'roles': ['manager', 'user']},
         'route': {'html': '<dd data-name="route"><a lay-href="route"><i class="layui-icon layui-icon-senior"></i>路由</a></dd>', 'roles': ['manager', 'user']},
         'deploy': {'html': '<dd data-name="deploy"><a lay-href="deploy"><i class="layui-icon layui-icon-fonts-code"></i>指令</a></dd>', 'roles': ['manager', 'user']},
