@@ -9,16 +9,3 @@ if [ -z "$(ls -A $CONTAINER_CONFIG_DIR 2>/dev/null)" ]; then
 else
     echo "检测到headscale存在配置文件"
 fi
-
-CONTAINER_DB_DIR="/var/lib/headscale"
-DB_FILE="$CONTAINER_DB_DIR/db.sqlite"
-if [ ! -f "$DB_FILE" ]; then
-	echo "将自动生成数据库文件"
-	# 初始化数据库
-    cd /app
-	python3 -m flask db init
-	python3 -m flask db migrate
-	python3 -m flask db upgrade
-else
-    echo "检测到SQLITE已有数据"
-fi

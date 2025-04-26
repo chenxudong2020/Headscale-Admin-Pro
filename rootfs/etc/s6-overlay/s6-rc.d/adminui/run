@@ -1,5 +1,18 @@
 #!/command/with-contenv bash
 
+CONTAINER_DB_DIR="/var/lib/headscale"
+DB_FILE="$CONTAINER_DB_DIR/db.sqlite"
+if [ ! -f "$DB_FILE" ]; then
+	echo "将自动生成数据库文件"
+	# 初始化数据库
+    cd /app
+	python3 -m flask db init
+	python3 -m flask db migrate
+	python3 -m flask db upgrade
+else
+    echo "检测到SQLITE已有数据"
+fi
+
 TOKEN_FILE_PATH="${BASE_PATH}/adminui/token"
 TOKEN_CONTENT=$(cat "$TOKEN_FILE_PATH" 2>/dev/null)
 if [ -z "$TOKEN_CONTENT" ]; then
@@ -13,7 +26,4 @@ APP_PY_PATH="/app/config.py"
 TOKEN_VALUE="$BEARER_TOKEN"
 sed -i '/^BEARER_TOKEN/d' "$APP_PY_PATH"
 echo "BEARER_TOKEN='$TOKEN_VALUE'" >> "$APP_PY_PATH"
-# 检测到headscale启动之后再启动python3
-exec \
-    /command/s6-notifyoncheck -d -n 300 -w 1000 -c "nc -z localhost 8080" \
-    python3 /app/app.py
+python3 /app/app.py
