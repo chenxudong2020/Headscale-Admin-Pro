@@ -1,18 +1,5 @@
 #!/command/with-contenv bash
 
-CONTAINER_DB_DIR="/var/lib/headscale"
-DB_FILE="$CONTAINER_DB_DIR/db.sqlite"
-if [ ! -f "$DB_FILE" ]; then
-	echo "将自动生成数据库文件"
-	# 初始化数据库
-    cd /app
-	python3 -m flask db init
-	python3 -m flask db migrate
-	python3 -m flask db upgrade
-else
-    echo "检测到SQLITE已有数据"
-fi
-
 TOKEN_FILE_PATH="${BASE_PATH}/adminui/token"
 TOKEN_CONTENT=$(cat "$TOKEN_FILE_PATH" 2>/dev/null)
 if [ -z "$TOKEN_CONTENT" ]; then
